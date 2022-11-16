@@ -1,11 +1,20 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BulkyBook.Web.Data;
+using Microsoft.AspNetCore.Mvc;
 
 namespace BulkyBook.Web.Controllers;
 
 public class CategoryController : Controller
 {
+    private readonly ApplicationDbContext _dbContext;
+
+    public CategoryController(ApplicationDbContext dbContext)
+    {
+        _dbContext = dbContext;
+    }
+    
     public IActionResult Index()
     {
-        return View();
+        var objCategoryList = _dbContext.Categories;
+        return View(objCategoryList);
     }
 }

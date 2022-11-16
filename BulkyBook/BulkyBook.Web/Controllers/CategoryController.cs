@@ -1,4 +1,5 @@
 ﻿using BulkyBook.Web.Data;
+using BulkyBook.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BulkyBook.Web.Controllers;
@@ -21,5 +22,14 @@ public class CategoryController : Controller
     public IActionResult Create()
     {
         return View();
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult Create(Category category)
+    {
+        _dbContext.Categories.Add(category);
+        _dbContext.SaveChanges();
+        return RedirectToAction("Index");
     }
 }

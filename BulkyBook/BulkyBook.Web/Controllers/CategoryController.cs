@@ -28,8 +28,46 @@ public class CategoryController : Controller
     [ValidateAntiForgeryToken]
     public IActionResult Create(Category category)
     {
-        _dbContext.Categories.Add(category);
-        _dbContext.SaveChanges();
-        return RedirectToAction("Index");
+        if(category.Name == category.DisplayOrder.ToString())
+        {
+            ModelState.AddModelError("name", "The Display Order cannot exactly match the Name.");
+        }
+        if (ModelState.IsValid)
+        {
+            _dbContext.Categories.Add(category);
+            _dbContext.SaveChanges();
+            return RedirectToAction("Index");
+        }
+        return View(category);
+    }
+
+    public IActionResult Edit(int? id)
+    {
+        if(id == null || id == 0)
+            return NotFound();
+        
+        var category = _dbContext.Categories.Find(id);
+        
+        if(category == null)
+            return NotFound();
+
+        return View(category);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult Edit(Category category)
+    {
+        if (category.Name == category.DisplayOrder.ToString())
+        {
+            ModelState.AddModelError("name", "The Display Order cannot exactly match the Name.");
+        }
+        if (ModelState.IsValid)
+        {
+            _dbContext.Categories.Add(category);
+            _dbContext.SaveChanges();
+            return RedirectToAction("Index");
+        }
+        return View(category);
     }
 }

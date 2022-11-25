@@ -1,24 +1,26 @@
 ﻿@page
-@model AbbyWeb.Pages.Categories.CreateModel
+@model AbbyWeb.Pages.Categories.DeleteModel
 
-<form method="post">
+<form method="post" asp-page="Delete">
+    <input hidden asp-for="Category.Id" /> 
     <div class="border p-3 mt-4">
         <div class="row pb-2">
-            <h2 class="text-secondary">Create category</h2>
+            <h2 class="text-secondary">Delete category</h2>
             <hr />
         </div>
         <div asp-validation-summary="All"></div>
         <div class="mb-3">
             <label asp-for="Category.Name"></label>
-            <input asp-for="Category.Name" class="form-control" />
+            <input asp-for="Category.Name" class="form-control" disabled />
             <span asp-validation-for="Category.Name" class="text-danger"></span>
         </div>
         <div class="mb-3">
             <label asp-for="Category.DisplayOrder"></label>
-            <input asp-for="Category.DisplayOrder" class="form-control" />
+            <input asp-for="Category.DisplayOrder" class="form-control" disabled />
             <span asp-validation-for="Category.DisplayOrder" class="text-danger"></span>
         </div>
-        <button type="submit" class="btn btn-primary" style="width:150px">Create</button>
+        <button type="submit" class="btn btn-danger" style="width:150px">Delete</button>
+        <button asp-page="Index" class="btn btn-secondary" style="width:150px">Back to list</button>
     </div>
 </form>
 

@@ -32,6 +32,7 @@ namespace AbbyWeb.Pages.Categories
             {
                 _applicationDbContext.Categories.Update(Category);
                 await _applicationDbContext.SaveChangesAsync();
+                TempData["success"] = "Category updated successfuly.";
                 return RedirectToPage("Index");
             }
 

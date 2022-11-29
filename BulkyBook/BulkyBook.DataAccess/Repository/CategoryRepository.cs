@@ -10,7 +10,5 @@ public class CategoryRepository : Repository<Category>, ICategoryRepository
     public CategoryRepository(ApplicationDbContext applicationDbContext) : base(applicationDbContext) 
         => _applicationDbContext = applicationDbContext;
 
-    public void Save() => _applicationDbContext.SaveChanges();
-
     public void Update(Category category) => _applicationDbContext.Categories.Update(category);
 }

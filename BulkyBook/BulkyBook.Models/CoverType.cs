@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
 namespace BulkyBook.Models;
+
 public class CoverType
 {
     [Key]

@@ -1,4 +1,4 @@
-﻿using BulkyBook.DataAccess.Data;
+﻿using BulkyBook.DataAccess.Repository.IRepository;
 using BulkyBook.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -6,16 +6,13 @@ namespace BulkyBook.Web.Controllers;
 
 public class CategoryController : Controller
 {
-    private readonly ApplicationDbContext _dbContext;
+    private readonly ICategoryRepository _categoryRepository;
 
-    public CategoryController(ApplicationDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
-    
+    public CategoryController(ICategoryRepository categoryRepository) => _categoryRepository = categoryRepository;
+
     public IActionResult Index()
     {
-        var objCategoryList = _dbContext.Categories;
+        var objCategoryList = _categoryRepository.GetAll();
         return View(objCategoryList);
     }
 
@@ -34,8 +31,8 @@ public class CategoryController : Controller
         }
         if (ModelState.IsValid)
         {
-            _dbContext.Categories.Add(category);
-            _dbContext.SaveChanges();
+            _categoryRepository.Add(category);
+            _categoryRepository.Save();
             TempData["success"] = "Category created successfuly";
             return RedirectToAction("Index");
         }
@@ -47,7 +44,7 @@ public class CategoryController : Controller
         if(id == null || id == 0)
             return NotFound();
         
-        var category = _dbContext.Categories.Find(id);
+        var category = _categoryRepository.GetFirstOrDefault(category => category.Id == id);
         
         if(category == null)
             return NotFound();
@@ -65,8 +62,8 @@ public class CategoryController : Controller
         }
         if (ModelState.IsValid)
         {
-            _dbContext.Categories.Update(category);
-            _dbContext.SaveChanges();
+            _categoryRepository.Update(category);
+            _categoryRepository.Save();
             TempData["success"] = "Category updated successfuly";
             return RedirectToAction("Index");
         }
@@ -78,7 +75,7 @@ public class CategoryController : Controller
         if (id == null || id == 0)
             return NotFound();
 
-        var category = _dbContext.Categories.Find(id);
+        var category = _categoryRepository.GetFirstOrDefault(category => category.Id == id);
 
         if (category == null)
             return NotFound();
@@ -90,8 +87,8 @@ public class CategoryController : Controller
     [ValidateAntiForgeryToken]
     public IActionResult Delete(Category category)
     {
-        _dbContext.Categories.Remove(category);
-        _dbContext.SaveChanges();
+        _categoryRepository.Remove(category);
+        _categoryRepository.Save();
         TempData["success"] = "Category deleted successfuly";
         return RedirectToAction("Index");
     }

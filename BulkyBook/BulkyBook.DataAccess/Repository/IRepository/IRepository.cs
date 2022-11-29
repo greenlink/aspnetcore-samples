@@ -6,7 +6,6 @@ public interface IRepository<T> where T : class
     T GetFirstOrDefault(Expression<Func<T, bool>> filter);
     IEnumerable<T> GetAll();
     void Add(T entity);
-    T GetById(int id);
     void Remove(T entity);
     void RemoveRange(IEnumerable<T> entities);
 }

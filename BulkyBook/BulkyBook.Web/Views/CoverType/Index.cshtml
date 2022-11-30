@@ -3,10 +3,10 @@
     ViewData["Title"] = "Index";
 }
 
-<div class="container p-3">
+<div class="container p-3 align-self-center" style="width:70%">
     <div class="row pt-4">
         <div class="col-6">
-            <h2 class="text-primary">Cover type List</h2>
+            <h2 class="text-primary">Cover type list</h2>
         </div>
         <div class="col-6 text-end">
             <a asp-controller="CoverType" asp-action="Create" class="btn btn-primary">
@@ -19,7 +19,7 @@
         <thead>
             <tr>
                 <th>
-                    Cover Type Name
+                    Name
                 </th>
             </tr>
         </thead>
@@ -27,10 +27,10 @@
             @foreach (var coverType in Model)
             {
                 <tr>
-                    <td width="100%">
+                    <td width="85%">
                         @coverType.Name
                     </td>
-                    <td width="10%">
+                    <td width="15%">
                         <div class="w-50 btn-group" role="group">
                             <div class="text-md-center">
                                 <a asp-controller="CoverType" asp-action="Edit" asp-route-id="@coverType.Id"

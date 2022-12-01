@@ -2,8 +2,8 @@
 using BulkyBook.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BulkyBook.Web.Controllers;
-
+namespace BulkyBook.Web.Areas.Admin.Controllers;
+[Area("Admin")]
 public class CoverTypeController : Controller
 {
     private readonly IUnitOfWork _unitOfWork;
@@ -37,12 +37,12 @@ public class CoverTypeController : Controller
 
     public IActionResult Edit(int? id)
     {
-        if(id == null || id == 0)
+        if (id == null || id == 0)
             return NotFound();
-        
+
         var coverType = _unitOfWork.CoverTypeRepository.GetFirstOrDefault(coverType => coverType.Id == id);
-        
-        if(coverType == null)
+
+        if (coverType == null)
             return NotFound();
 
         return View(coverType);

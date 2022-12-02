@@ -1,6 +1,7 @@
 ﻿using BulkyBook.DataAccess.Repository.IRepository;
 using BulkyBook.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace BulkyBook.Web.Areas.Admin.Controllers;
 [Area("Admin")]
@@ -16,41 +17,31 @@ public class ProductController : Controller
         return View(objProductList);
     }
 
-    public IActionResult Create()
+    public IActionResult Upsert(int? id)
     {
-        return View();
-    }
+        var product = new Product();
+        IEnumerable<SelectListItem> categoryList = _unitOfWork.CategoryRepository.GetAll()
+            .Select(p => new SelectListItem { Text = p.Name, Value = p.Id.ToString() });
+        IEnumerable<SelectListItem> coverTypeList = _unitOfWork.CoverTypeRepository.GetAll()
+            .Select(c => new SelectListItem { Text = c.Name, Value = c.Id.ToString() });
 
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public IActionResult Create(Product product)
-    {
-        if (ModelState.IsValid)
-        {
-            _unitOfWork.ProductRepository.Add(product);
-            _unitOfWork.Save();
-            TempData["success"] = "product created successfuly";
-            return RedirectToAction("Index");
-        }
-        return View(product);
-    }
-
-    public IActionResult Edit(int? id)
-    {
         if (id == null || id == 0)
-            return NotFound();
+        {
+            ViewBag.CategoryList = categoryList;
+            ViewBag.CoverTypeList = coverTypeList;
+            return View(product);
+        }
+        else
+        {
 
-        var product = _unitOfWork.ProductRepository.GetFirstOrDefault(p => p.Id == id);
-
-        if (product == null)
-            return NotFound();
+        }
 
         return View(product);
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult Edit(Product product)
+    public IActionResult Upsert(Product product)
     {
         if (ModelState.IsValid)
         {

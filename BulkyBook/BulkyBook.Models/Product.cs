@@ -25,9 +25,11 @@ public class Product
     [Range(1, 100000)]
     public double Price100 { get; set; }
     public string ImageUrl { get; set; }
+    [Display(Name = "Category")]
     [Required]
     public int CategoryId { get; set; }
     public Category Category { get; set; }
+    [Display(Name = "Cover Type")]
     [Required]
     public int CoverTypeId { get; set; }
     public CoverType CoverType { get; set; }

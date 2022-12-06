@@ -1,6 +1,8 @@
 using BulkyBook.DataAccess.Data;
 using BulkyBook.DataAccess.Repository;
 using BulkyBook.DataAccess.Repository.IRepository;
+using BulkyBook.Utility.SaveFile;
+using BulkyBook.Utility.SaveFile.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,6 +13,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlSer
     builder.Configuration.GetConnectionString("DefaultConnection"),
     b => b.MigrationsAssembly("BulkyBook.DataAccess")));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddTransient<ISaveFile, SaveFile>();
 builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 var app = builder.Build();
 

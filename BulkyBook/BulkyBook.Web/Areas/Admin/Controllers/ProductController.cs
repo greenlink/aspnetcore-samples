@@ -1,6 +1,7 @@
 ﻿using BulkyBook.DataAccess.Repository.IRepository;
 using BulkyBook.Models;
 using BulkyBook.Models.ViewModels;
+using BulkyBook.Utility.SaveFile.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -9,12 +10,12 @@ namespace BulkyBook.Web.Areas.Admin.Controllers;
 public class ProductController : Controller
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IWebHostEnvironment _webHostEnvironment;
+    private readonly ISaveFile _saveFile;
 
-    public ProductController(IUnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment)
+    public ProductController(IUnitOfWork unitOfWork, ISaveFile saveFile)
     {
         _unitOfWork = unitOfWork;
-        _webHostEnvironment = webHostEnvironment;
+        _saveFile = saveFile;
     }
 
     public IActionResult Index()
@@ -49,20 +50,14 @@ public class ProductController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult Upsert(ProductVM productVM, IFormFile? file)
+    public IActionResult Upsert(ProductVM productVM, IFormFile? imageFile)
     {
         if (ModelState.IsValid)
         {
-            var wwwRootPath = _webHostEnvironment.WebRootPath;
-            if(file != null)
+            if(imageFile != null)
             {
-                var fileName =  Guid.NewGuid().ToString();
-                var uploads = Path.Combine(wwwRootPath, @"images\products");
-                var extension = Path.GetExtension(file.FileName);
-
-                using var filestream = new FileStream(Path.Combine(uploads, fileName + extension), FileMode.Create);
-                file.CopyTo(filestream);
-                productVM.Product.ImageUrl = @"images\products\" + fileName + extension;
+                _saveFile.Save(imageFile, @"images\products");
+                productVM.Product.ImageUrl = _saveFile.GetLastSavedFilePath();
             }
             _unitOfWork.ProductRepository.Add(productVM.Product);
             _unitOfWork.Save();

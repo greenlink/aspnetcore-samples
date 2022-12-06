@@ -20,8 +20,7 @@ public class ProductController : Controller
 
     public IActionResult Index()
     {
-        var objProductList = _unitOfWork.ProductRepository.GetAll();
-        return View(objProductList);
+        return View();
     }
 
     public IActionResult Upsert(int? id)
@@ -89,4 +88,15 @@ public class ProductController : Controller
         TempData["success"] = "Product deleted successfuly";
         return RedirectToAction("Index");
     }
+
+    #region API Calls
+
+    [HttpGet]
+    public IActionResult GetAll()
+    {
+        var products = _unitOfWork.ProductRepository.GetAll();
+        return Json(new {data = products});
+    }
+
+    #endregion
 }

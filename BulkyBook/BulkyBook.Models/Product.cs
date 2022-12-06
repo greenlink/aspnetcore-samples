@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System.ComponentModel.DataAnnotations;
 
 namespace BulkyBook.Models;
 public class Product
@@ -24,13 +25,16 @@ public class Product
     [Required]
     [Range(1, 100000)]
     public double Price100 { get; set; }
+    [ValidateNever]
     public string ImageUrl { get; set; }
     [Display(Name = "Category")]
     [Required]
     public int CategoryId { get; set; }
+    [ValidateNever]
     public Category Category { get; set; }
     [Display(Name = "Cover Type")]
     [Required]
     public int CoverTypeId { get; set; }
+    [ValidateNever]
     public CoverType CoverType { get; set; }
 }

@@ -9,8 +9,13 @@ namespace BulkyBook.Web.Areas.Admin.Controllers;
 public class ProductController : Controller
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IWebHostEnvironment _webHostEnvironment;
 
-    public ProductController(IUnitOfWork unitOfWork) => _unitOfWork = unitOfWork;
+    public ProductController(IUnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment)
+    {
+        _unitOfWork = unitOfWork;
+        _webHostEnvironment = webHostEnvironment;
+    }
 
     public IActionResult Index()
     {
@@ -44,13 +49,24 @@ public class ProductController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult Upsert(ProductVM productVM, IFormFile file)
+    public IActionResult Upsert(ProductVM productVM, IFormFile? file)
     {
         if (ModelState.IsValid)
         {
-            //_unitOfWork.ProductRepository.Update(productVM.Product);
-            //_unitOfWork.Save();
-            TempData["success"] = "Product updated successfuly";
+            var wwwRootPath = _webHostEnvironment.WebRootPath;
+            if(file != null)
+            {
+                var fileName =  Guid.NewGuid().ToString();
+                var uploads = Path.Combine(wwwRootPath, @"images\products");
+                var extension = Path.GetExtension(file.FileName);
+
+                using var filestream = new FileStream(Path.Combine(uploads, fileName + extension), FileMode.Create);
+                file.CopyTo(filestream);
+                productVM.Product.ImageUrl = @"images\products\" + fileName + extension;
+            }
+            _unitOfWork.ProductRepository.Add(productVM.Product);
+            _unitOfWork.Save();
+            TempData["success"] = "Product created successfuly";
             return RedirectToAction("Index");
         }
         return View(productVM);

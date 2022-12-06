@@ -94,7 +94,7 @@ public class ProductController : Controller
     [HttpGet]
     public IActionResult GetAll()
     {
-        var products = _unitOfWork.ProductRepository.GetAll();
+        var products = _unitOfWork.ProductRepository.GetAll("Category,CoverType");
         return Json(new {data = products});
     }
 

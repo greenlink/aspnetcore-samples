@@ -16,17 +16,29 @@ public class Repository<T> : IRepository<T> where T : class
 
     public void Add(T entity) => _dbSet.Add(entity);
 
-    public IEnumerable<T> GetAll()
+    public IEnumerable<T> GetAll(string? includeProperties = null)
     {
-        IQueryable<T> query = _dbSet;
+        var query = GetQueryWithIncludeObjects(includeProperties, _dbSet);
         return query.ToList();
     }
 
-    public T GetFirstOrDefault(Expression<Func<T, bool>> filter)
+    private static IQueryable<T> GetQueryWithIncludeObjects(string? includeProperties, DbSet<T> dbSet)
     {
-        IQueryable<T> query = _dbSet;
-        query = query.Where(filter);
+        IQueryable<T> query = dbSet;
 
+        if (string.IsNullOrWhiteSpace(includeProperties))
+            return query;
+        
+        foreach (var includeProp in includeProperties.Split(",", StringSplitOptions.RemoveEmptyEntries))
+            query = query.Include(includeProp);
+
+        return query;
+    }
+
+    public T GetFirstOrDefault(Expression<Func<T, bool>> filter, string? includeProperties = null)
+    {
+        var query = GetQueryWithIncludeObjects(includeProperties, _dbSet);
+        query = query.Where(filter);
         return query.FirstOrDefault();
     }
 

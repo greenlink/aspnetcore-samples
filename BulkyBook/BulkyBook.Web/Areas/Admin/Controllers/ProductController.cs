@@ -34,15 +34,8 @@ public class ProductController : Controller
             .Select(c => new SelectListItem { Text = c.Name, Value = c.Id.ToString() })
         };
 
-        if (id == null || id == 0)
-        {
-            
-            return View(productVM);
-        }
-        else
-        {
-
-        }
+        if (id != null && id != 0)
+            productVM.Product = _unitOfWork.ProductRepository.GetFirstOrDefault(p => p.Id == id);
 
         return View(productVM);
     }

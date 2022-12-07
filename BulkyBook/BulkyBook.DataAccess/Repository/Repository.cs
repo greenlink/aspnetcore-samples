@@ -16,13 +16,19 @@ public class Repository<T> : IRepository<T> where T : class
 
     public void Add(T entity) => _dbSet.Add(entity);
 
-    public IEnumerable<T> GetAll(string? includeProperties = null)
+    public IEnumerable<T> GetAll()
+    {
+        IQueryable<T> query = _dbSet;
+        return query.ToList();
+    }
+
+    public IEnumerable<T> GetAll(string includeProperties)
     {
         var query = GetQueryWithIncludeObjects(includeProperties, _dbSet);
         return query.ToList();
     }
 
-    private static IQueryable<T> GetQueryWithIncludeObjects(string? includeProperties, DbSet<T> dbSet)
+    private static IQueryable<T> GetQueryWithIncludeObjects(string includeProperties, DbSet<T> dbSet)
     {
         IQueryable<T> query = dbSet;
 
@@ -34,8 +40,15 @@ public class Repository<T> : IRepository<T> where T : class
 
         return query;
     }
+    
+    public T GetFirstOrDefault(Expression<Func<T, bool>> filter)
+    {
+        IQueryable<T> query = _dbSet;
+        query = query.Where(filter);
+        return query.FirstOrDefault();
+    }
 
-    public T GetFirstOrDefault(Expression<Func<T, bool>> filter, string? includeProperties = null)
+    public T GetFirstOrDefault(Expression<Func<T, bool>> filter, string includeProperties)
     {
         var query = GetQueryWithIncludeObjects(includeProperties, _dbSet);
         query = query.Where(filter);

@@ -48,14 +48,27 @@ public class ProductController : Controller
         {
             if(imageFile != null)
             {
-                _saveFile.Save(imageFile, @"images\products");
+                var uploadPath = @"images\products";
+                
+                if (!string.IsNullOrWhiteSpace(productVM.Product.ImageUrl))
+                    _saveFile.Update(imageFile, productVM.Product.ImageUrl, uploadPath);
+                else
+                    _saveFile.Save(imageFile, uploadPath);
+
                 productVM.Product.ImageUrl = _saveFile.GetLastSavedFilePath();
             }
-            _unitOfWork.ProductRepository.Add(productVM.Product);
+
+            if(productVM.Product.Id == 0)
+                _unitOfWork.ProductRepository.Add(productVM.Product);
+            else
+                _unitOfWork.ProductRepository.Update(productVM.Product);
+
             _unitOfWork.Save();
             TempData["success"] = "Product created successfuly";
+            
             return RedirectToAction("Index");
         }
+
         return View(productVM);
     }
 

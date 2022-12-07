@@ -25,4 +25,17 @@ public class SaveFile : ISaveFile
         formFile.CopyTo(filestream);
         _lastSavedFilePath = uploadPath + @"\" + fileName + extension;
     }
+
+    public void Update(IFormFile formFile, string oldPath, string uploadPath)
+    {
+        if (formFile == null) throw new ArgumentNullException(nameof(formFile));
+
+        var wwwRootPathToCheck = _webHostEnvironment.WebRootPath;
+        var oldImagePath = Path.Combine(wwwRootPathToCheck, oldPath.TrimStart('\\'));
+
+        if (File.Exists(oldImagePath))
+            File.Delete(oldImagePath);
+
+        Save(formFile,uploadPath);
+    }
 }

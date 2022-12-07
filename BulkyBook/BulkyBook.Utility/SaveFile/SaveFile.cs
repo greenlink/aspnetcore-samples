@@ -18,24 +18,28 @@ public class SaveFile : ISaveFile
 
         var wwwRootPath = _webHostEnvironment.WebRootPath;
         var fileName = Guid.NewGuid().ToString();
-        var uploads = Path.Combine(wwwRootPath, uploadPath);
+        var fullUploadPath = Path.Combine(wwwRootPath, uploadPath);
         var extension = Path.GetExtension(formFile.FileName);
 
-        using var filestream = new FileStream(Path.Combine(uploads, fileName + extension), FileMode.Create);
+        using var filestream = new FileStream(Path.Combine(fullUploadPath, fileName + extension), FileMode.Create);
         formFile.CopyTo(filestream);
-        _lastSavedFilePath = uploadPath + @"\" + fileName + extension;
+        _lastSavedFilePath = @"\" + uploadPath + @"\" + fileName + extension;
     }
 
-    public void Update(IFormFile formFile, string oldPath, string uploadPath)
+    public void Update(IFormFile formFile, string currentFilePath, string uploadPath)
     {
         if (formFile == null) throw new ArgumentNullException(nameof(formFile));
+        
+        Delete(currentFilePath);
+        Save(formFile, uploadPath);
+    }
 
+    public void Delete(string filePath)
+    {
         var wwwRootPathToCheck = _webHostEnvironment.WebRootPath;
-        var oldImagePath = Path.Combine(wwwRootPathToCheck, oldPath.TrimStart('\\'));
+        var fullFilePath = Path.Combine(wwwRootPathToCheck, filePath.TrimStart('\\'));
 
-        if (File.Exists(oldImagePath))
-            File.Delete(oldImagePath);
-
-        Save(formFile,uploadPath);
+        if (File.Exists(fullFilePath))
+            File.Delete(fullFilePath);
     }
 }
